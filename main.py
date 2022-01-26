@@ -1,16 +1,51 @@
-# This is a sample Python script.
+from Deck.deck import Deck
+from Player.player import Player
+from Player.player_status import PlayerStatus
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+deck = Deck()
+deck.shuffle()
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def create_players(number):
+    player_list = []
+    for player_id in range(number):
+        player = Player(player_id, deck.deal_card(), deck.deal_card())
+        player_list.append(player)
+    return player_list
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+def hit(player):
+    player.status = PlayerStatus.HIT
+    player.collect(deck.deal_card())
+
+
+def stick(player):
+    player.status = PlayerStatus.STICK
+
+
+def go_bust(player):
+    player.status = PlayerStatus.GO_BUST
+
+
+def play(active_players):
+    stick_player = []
+    exactly_21_players = []
+    while len(active_players) > 0:
+        for player in active_players:
+            if player.total() < 17:
+                hit(player)
+                print(str(player.player_id) + ": " + player.status.name + "----" + str(player.total()))
+            elif player.total() > 21:
+                go_bust(player)
+                active_players.remove(player)
+                print(str(player.player_id) + ": " + player.status.name + "----" + str(player.total()))
+            elif player.total() >= 17:
+                stick(player)
+                stick_player.append(player)
+                players.remove(player)
+                print(str(player.player_id) + ": " + player.status.name + "----" + str(player.total()))
+        print("------------------------------------------------------------------")
+
+
+players = create_players(3)
+play(players)
